@@ -1,0 +1,43 @@
+from sklearn.neighbors import KNeighborsClassifier
+import numpy as np
+from sklearn.metrics import matthews_corrcoef
+import matplotlib.pyplot as plt
+from sklearn.model_selection import cross_val_score,cross_validate
+from sklearn.model_selection import LeaveOneOut
+import pandas as pd
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
+filename = "F:/protein_structure/pse-parameter/25PDBdip.csv"
+data = np.loadtxt(filename, delimiter=',')
+data1 = data
+y_pred = np.array([])
+y_true = data[:, -1]
+#labels = labels.reshape(-1,1)
+# 留一法检验
+for i in range(0, data.shape[0]):
+    x_test = data[i, 0:400]
+    x_test = x_test.reshape((1,-1))
+   # X_test_new = lda.fit(x_test_new, x_t_label).transform(x_test_new)
+    #print(x_test.shape,x_test)
+    x_train = np.delete(data1, [i], axis=0)
+    labels = x_train[:, -1]
+    labels = labels.reshape(-1, 1)
+    x_train = np.delete(x_train, [400], axis=1)
+    data1 = data
+    print(i)
+    neigh = KNeighborsClassifier(n_neighbors=5)
+    neigh.fit(x_train,labels)
+    y= neigh.predict(x_test)
+    y_pred= np.append(y_pred, y)
+    #print(clf.score(x_test))
+#print(y_pred)
+#print(y_ture)
+target_names = ['class 1', 'class 2', 'class 3', 'class 4']
+print(classification_report(y_true, y_pred, target_names=target_names))
+ACC = accuracy_score(y_true, y_pred)
+print(ACC)
+
+np.savetxt('shuju2.txt',y_pred)
+np.savetxt('shuju1.txt',y_true)
+# MCC = matthews_corrcoef(y_true, y_pred)
+# print(MCC)
